@@ -1,0 +1,180 @@
+<project default="compile" basedir=".">
+	
+	<!-- Initializes the environment paths and properties -->
+	  <target name="init">
+	    <!-- Initializes the directory structure properties -->
+	    <property name="src.dir" location="."/>
+	    <property name="obj.dir" location="./classes"/>
+	    <property name="run.dir" location="./run"/>
+	    <property name="conf.dir" location="./config"/>
+	    <property name="lib-client.dir" location="./lib-client"/>
+	    <property name="bundle.dir" location="./bundle"/>
+	    <property name="felix.dir" location="./felix"/>
+	    <property name="admin-file-path" location="${conf.dir}/joramAdmin_TP.xml"/>
+	    <!-- Project classpath needed for execution -->
+	    <path id="project.class.path">
+	      <pathelement path="${java.class.path}/"/>
+	      <fileset dir="${bundle.dir}">
+	         <include name="*.jar"/>
+	      </fileset>
+	      <fileset dir="${lib-client.dir}">
+	         <include name="*.jar"/>
+	      </fileset>
+	      <pathelement path="${felix.dir}/felix.jar"/>
+	      <pathelement path="${obj.dir}"/>
+	      <pathelement path="${run.dir}"/>
+	    </path>
+	    <property name="project.class.path" refid="project.class.path"/>
+	  </target>
+	
+	  <!-- Cleans example - deletes generated files -->
+	  <target name="clean" depends="init"
+	          description="--> Deletes generated files">
+	    <delete dir="${obj.dir}"/>
+	    <delete dir="${run.dir}"/>
+	  </target>
+	
+	  <!-- Prepares the compilation phase -->
+	  <target name="prepare" depends="init">
+	    <delete quiet="true" dir="${obj.dir}"/>
+	    <delete quiet="true" dir="${run.dir}"/>
+	    <mkdir dir="${obj.dir}"/>
+	  </target>
+	
+	  <!-- Compiles -->
+	  <target name="compile" depends="prepare"
+	    	description="--> Compile all examples">
+	    <javac srcdir="${src.dir}"
+	           destdir="${obj.dir}"
+	           source="1.7" target="1.7" debug="true"
+	           deprecation="${deprecation}"
+	           optimize="${optimize}"
+	           nowarn="${nowarn}"
+	           verbose="${verbose}">
+	      <classpath refid="project.class.path"/>
+	      <include name="**/*.java"/>
+	    </javac>
+	  </target>
+	
+	  <!-- Cleans run directory -->
+	  <target name="reset" depends="init"
+	          description="--> Cleans run directory">
+	    <delete dir="${run.dir}"/>
+	  </target>
+	
+	  <!-- Initializes the centralized configuration -->
+	  <target name="simple_init" depends="init">
+	    <mkdir dir="${run.dir}"/>
+	    <copy file="${conf.dir}/a3config.dtd" todir="${run.dir}"/>
+	    <copy file="${conf.dir}/a3debug.cfg" todir="${run.dir}"/>
+	    <copy file="${conf.dir}/centralized_a3servers.xml"
+	          tofile="${run.dir}/a3servers.xml"
+	          overwrite="true"/>
+	    <copy file="${conf.dir}/jndi.properties"
+	          tofile="${run.dir}/jndi.properties"
+	          overwrite="true"/>
+	    <copy file="${conf.dir}/config.properties"
+	          tofile="${run.dir}/config.properties"
+	          overwrite="true"/>
+	  </target>
+	
+	  <!-- Starts a server -->
+	  <target name="server" depends="init">
+	    <java classname="org.apache.felix.main.Main"
+	          failonerror="no" fork="yes"
+	          dir="${run.dir}">
+	      <classpath path="${project.class.path}"/>
+	      <jvmarg line="-Dfelix.config.properties=file:config.properties -Dfr.dyade.aaa.agent.AgentServer.id=0 -Dcom.sun.management.jmxremote"/>
+	    </java>
+	  </target>
+
+	  <!-- Start a server in NullTransaction mode -->
+	  <target name="single_server" depends="simple_init"
+	          description="=> Starts a single server in non-persistent mode">
+	    <antcall target="server">
+	   
+	    </antcall>
+	  </target>
+	
+	<!--                   -->
+	<!--    ADMIN tasks    -->
+	<!--                   -->
+	
+	  <!-- Setup the classic configuration -->
+	  <target name="admin" depends="init"
+	          description="--> Runs a classic administration (for a centralized architecture)">
+	    <java classname="classic.ClassicAdmin"
+	      failonerror="no" fork="yes"
+	      dir="${run.dir}">
+	      <classpath path="${project.class.path}"/>
+	    </java>
+	  </target>
+
+	  <!-- Setup the classic configuration -->
+	  <target name="adminxml" depends="init"
+	          description="--> Runs a classic administration XML (for a centralized architecture)">
+	    <copy file="${conf.dir}/joramAdmin_TP.xml" overwrite="true" todir="${run.dir}"/>
+	    <java classname="org.objectweb.joram.client.jms.admin.AdminModule"
+	      failonerror="no" fork="yes"
+	      dir="${run.dir}">
+	      <classpath path="${project.class.path}"/>
+	      <arg line="${admin-file-path}"/>
+	    </java>
+	  </target>
+
+	  <!-- Executes ClassicAdmin -->
+	  <target name="classicadmin" depends="simple_init">
+	    <java classname="tpt.jms.ClassicAdmin"
+	          failonerror="no" fork="yes"
+	          dir="${run.dir}">
+	      <classpath path="${project.class.path}"/>
+	    </java>
+	  </target>
+	
+	<!--                    -->
+	<!--    CLIENT tasks    -->
+	<!--                    -->
+	  <!-- Runs the Sender client -->
+	  <target name="sender" depends="simple_init"
+	    description="--> Starts a Sender client">
+	    <java classname="tpt.jms.Sender" failonerror="no" fork="yes"
+	          dir="${run.dir}">
+	      <classpath path="${project.class.path}"/>
+	      <arg value="${destination}"/>
+	      <arg value="${count}"/>
+	    </java>
+	  </target>
+
+
+	<!-- Runs the Browser client -->
+	  <target name="browser" depends="simple_init"
+	    description="--> Starts a Browser client">
+	    <java classname="tpt.jms.Browser" failonerror="no" fork="yes"
+	          dir="${run.dir}">
+	      <classpath path="${project.class.path}"/>
+	      <arg value="${queue}"/>
+	    </java>
+	  </target>
+	
+	  <!-- Runs the Receiver client -->
+	  <target name="receiver" depends="simple_init"
+	    description="--> Starts a Receiver client">
+	    <java classname="tpt.jms.Receiver" failonerror="no" fork="yes"
+	          dir="${run.dir}">
+	      <classpath path="${project.class.path}"/>
+	      <arg value="${destination}"/>
+	      <arg value="${count}"/>
+	    </java>
+	  </target>
+	
+	  <!-- Runs the Subscriber client -->
+	  <target name="subscriber" depends="simple_init"
+	    description="--> Starts a Subscriber client">
+	    <java classname="tpt.jms.Subscriber" failonerror="no" fork="yes"
+	          dir="${run.dir}">
+	      <classpath path="${project.class.path}"/>
+	      <arg value="${destination}"/>
+	    </java>
+	  </target>
+
+</project>

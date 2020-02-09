@@ -1,0 +1,41 @@
+Aristotle prend la fourchette à gauche
+Confucius prend la fourchette à gauche
+Aristotle prend la fourchette à droite
+Confucius prend la fourchette à droite
+Confucius commence à manger
+Aristotle commence à manger
+Aristotle a bien mangé et commence à penser
+Confucius a bien mangé et commence à penser
+Descartes prend la fourchette à gauche
+Descartes prend la fourchette à droite
+Descartes commence à manger
+Plato prend la fourchette à gauche
+Plato prend la fourchette à droite
+Plato commence à manger
+Plato a bien mangé et commence à penser
+Descartes a bien mangé et commence à penser
+EEpicurus prend la fourchette à gauche
+EEpicurus prend la fourchette à droite
+EEpicurus commence à manger
+EEpicurus a bien mangé et commence à penser
+Descartes prend la fourchette à gauche
+Aristotle prend la fourchette à gauche
+Descartes prend la fourchette à droite
+Aristotle prend la fourchette à droite
+Descartes commence à manger
+Aristotle commence à manger
+Aristotle a bien mangé et commence à penser
+Descartes a bien mangé et commence à penser
+Confucius prend la fourchette à gauche
+Confucius prend la fourchette à droite
+Confucius commence à manger
+Confucius a bien mangé et commence à penser
+Plato prend la fourchette à gauche
+Plato prend la fourchette à droite
+Plato commence à manger
+Plato a bien mangé et commence à penser
+Aristotle a mangé 2 fois.
+Plato a mangé 2 fois.
+Confucius a mangé 2 fois.
+Descartes a mangé 2 fois.
+EEpicurus a mangé 1 fois.
